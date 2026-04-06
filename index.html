@@ -61,7 +61,7 @@
                   }
                 }, 
                 "opacity": {"condition": {"param": "repSelect", "value": 0.9}, "value": 0.15},
-                "tooltip": [{"field": "Item"}, {"timeUnit": "yearmonth", "field": "OrderDate", "title": "Month"}, {"field": "TotalNum", "aggregate": "sum", "format": "$.2f", "title": "Volume ($)"}]
+                "tooltip": [{"field": "Item"}, {"timeUnit": "yearmonth", "field": "OrderDate", "title": "Month"}, {"field": "TotalNum", "aggregate": "sum", "format": "$.2f"}]
               }
             }
           ]
@@ -77,8 +77,7 @@
                 "encoding": {
                   "x": {"bin": {"maxbins": 10}, "field": "UnitsNum", "title": "Units"},
                   "y": {"aggregate": "count", "title": "Freq"},
-                  "opacity": {"condition": {"param": "repSelect", "value": 1}, "value": 0.2},
-                  "tooltip": [{"field": "UnitsNum", "bin": {"maxbins": 10}, "title": "Units Range"}, {"aggregate": "count", "title": "Frequency"}]
+                  "opacity": {"condition": {"param": "repSelect", "value": 1}, "value": 0.2}
                 }
               },
               {
@@ -94,7 +93,7 @@
         {
           "hconcat": [
             {
-              "title": "4. Region Performance (Stacked by Item)",
+              "title": "4. Region Performance (Click to Highlight)",
               "width": 300, "height": 200,
               "mark": {"type": "bar", "cornerRadiusTop": 3},
               "params": [{"name": "regClick", "select": {"type": "point", "fields": ["Region"]}}],
@@ -110,8 +109,7 @@
                     "range": ["#e6194b", "#fc8d62", "#8da0cb", "#4363d8", "#a6d854"]
                   }
                 },
-                "opacity": {"condition": {"param": "repSelect", "value": 1}, "value": 0.3},
-                "tooltip": [{"field": "Region"}, {"field": "Item"}, {"aggregate": "sum", "field": "TotalNum", "title": "Revenue", "format": "$.2f"}]
+                "opacity": {"condition": {"param": "repSelect", "value": 1}, "value": 0.3}
               }
             },
             {
@@ -135,7 +133,7 @@
                   "condition": {"param": "brush", "empty": false, "value": 1},
                   "value": 0.15
                 },
-                "tooltip": [{"field": "Rep"}, {"field": "Item"}, {"field": "UnitCostNum", "title": "Unit Cost", "format": "$.2f"}, {"field": "TotalNum", "title": "Total", "format": "$.2f"}]
+                "tooltip": [{"field": "Rep"}, {"field": "Item"}, {"field": "UnitCostNum", "title": "Unit Cost"}, {"field": "TotalNum", "title": "Total", "format": "$.2f"}]
               }
             }
           ]
