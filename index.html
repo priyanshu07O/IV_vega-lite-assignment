@@ -36,7 +36,7 @@
               "width": 200, "height": 200,
               "mark": {"type": "arc", "innerRadius": 60, "stroke": "#fff"},
               "params": [{"name": "repSelect", "select": {"type": "point", "fields": ["Rep"]}}],
-              "transform": [{"filter": {"param": "brush"}}], 
+              /* The bug was here! Removed the brush filter so the pie chart stays visible */
               "encoding": {
                 "theta": {"field": "TotalNum", "type": "quantitative", "aggregate": "sum"},
                 "color": {"field": "Rep", "type": "nominal", "scale": {"scheme": "tableau10"}},
@@ -52,9 +52,16 @@
               "encoding": {
                 "x": {"timeUnit": "yearmonth", "field": "OrderDate", "axis": {"format": "%b %y", "grid": false}, "title": "Timeline"},
                 "y": {"aggregate": "sum", "field": "TotalNum", "stack": "center", "axis": null},
-                "color": {"field": "Item", "type": "nominal", "scale": {"range": ["#F5F5DC", "#E8DAB2", "#C0D6DF", "#DBB4AD", "#AABCA0"]}}, 
+                "color": {
+                  "field": "Item", 
+                  "type": "nominal", 
+                  "scale": {
+                    "domain": ["Binder", "Desk", "Pen", "Pen Set", "Pencil"],
+                    "range": ["#e6194b", "#fc8d62", "#8da0cb", "#4363d8", "#a6d854"]
+                  }
+                }, 
                 "opacity": {"condition": {"param": "repSelect", "value": 0.9}, "value": 0.15},
-                "tooltip": [{"field": "Item"}, {"timeUnit": "yearmonth", "field": "OrderDate", "title": "Month"}, {"field": "TotalNum", "aggregate": "sum", "format": "$.2f"}]
+                "tooltip": [{"field": "Item"}, {"timeUnit": "yearmonth", "field": "OrderDate", "title": "Month"}, {"field": "TotalNum", "aggregate": "sum", "format": "$.2f", "title": "Volume ($)"}]
               }
             }
           ]
@@ -74,7 +81,6 @@
                 }
               },
               {
-                // FIX 1: Increased size to 3 for easier hovering and added the tooltip encoding
                 "mark": {"type": "rule", "color": "#e53e3e", "size": 3},
                 "encoding": {
                   "x": {"aggregate": "mean", "field": "UnitsNum"},
@@ -95,22 +101,34 @@
               "encoding": {
                 "x": {"field": "Region", "type": "nominal", "axis": {"labelAngle": 0}},
                 "y": {"aggregate": "sum", "field": "TotalNum", "title": "Total Revenue"},
-                "color": {"condition": {"param": "regClick", "value": "#4a90e2"}, "value": "#cbd5e0"},
+                "color": {
+                  "field": "Item", 
+                  "type": "nominal", 
+                  "scale": {
+                    "domain": ["Binder", "Desk", "Pen", "Pen Set", "Pencil"],
+                    "range": ["#e6194b", "#fc8d62", "#8da0cb", "#4363d8", "#a6d854"]
+                  }
+                },
                 "opacity": {"condition": {"param": "repSelect", "value": 1}, "value": 0.3}
               }
             },
             {
               "title": "5. Item Cost vs. Total (Drag to Brush)",
               "width": 350, "height": 200,
-              // FIX 2: Increased size to 100 and added a dark stroke outline
               "mark": {"type": "point", "filled": true, "size": 100, "stroke": "#333", "strokeWidth": 0.5},
               "params": [{"name": "brush", "select": "interval"}],
               "transform": [{"filter": {"param": "regClick"}}], 
               "encoding": {
                 "x": {"field": "UnitCostNum", "type": "quantitative", "title": "Unit Cost ($)"},
                 "y": {"field": "TotalNum", "type": "quantitative", "title": "Total ($)"},
-                // FIX 2: Changed to "dark2" scheme for bold, high-contrast colors
-                "color": {"field": "Item", "type": "nominal", "scale": {"scheme": "dark2"}}, 
+                "color": {
+                  "field": "Item", 
+                  "type": "nominal", 
+                  "scale": {
+                    "domain": ["Binder", "Desk", "Pen", "Pen Set", "Pencil"],
+                    "range": ["#e6194b", "#fc8d62", "#8da0cb", "#4363d8", "#a6d854"]
+                  }
+                }, 
                 "opacity": {
                   "condition": {"param": "brush", "empty": false, "value": 1},
                   "value": 0.15
