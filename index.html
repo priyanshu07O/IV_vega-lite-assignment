@@ -52,7 +52,14 @@
               "encoding": {
                 "x": {"timeUnit": "yearmonth", "field": "OrderDate", "axis": {"format": "%b %y", "grid": false}, "title": "Timeline"},
                 "y": {"aggregate": "sum", "field": "TotalNum", "stack": "center", "axis": null},
-                "color": {"field": "Item", "type": "nominal", "scale": {"scheme": "set2"}}, 
+                "color": {
+                  "field": "Item", 
+                  "type": "nominal", 
+                  "scale": {
+                    "domain": ["Binder", "Desk", "Pen", "Pen Set", "Pencil"],
+                    "range": ["#FF595E", "#FFCA3A", "#8AC926", "#1982C4", "#6A4C93"]
+                  }
+                }, 
                 "opacity": {"condition": {"param": "repSelect", "value": 0.9}, "value": 0.15},
                 "tooltip": [{"field": "Item"}, {"timeUnit": "yearmonth", "field": "OrderDate", "title": "Month"}, {"field": "TotalNum", "aggregate": "sum", "format": "$.2f", "title": "Volume ($)"}]
               }
@@ -95,7 +102,14 @@
               "encoding": {
                 "x": {"field": "Region", "type": "nominal", "axis": {"labelAngle": 0}},
                 "y": {"aggregate": "sum", "field": "TotalNum", "title": "Total Revenue"},
-                "color": {"field": "Item", "type": "nominal", "scale": {"scheme": "set2"}},
+                "color": {
+                  "field": "Item", 
+                  "type": "nominal", 
+                  "scale": {
+                    "domain": ["Binder", "Desk", "Pen", "Pen Set", "Pencil"],
+                    "range": ["#FF595E", "#FFCA3A", "#8AC926", "#1982C4", "#6A4C93"]
+                  }
+                },
                 "opacity": {"condition": {"param": "repSelect", "value": 1}, "value": 0.3},
                 "tooltip": [{"field": "Region"}, {"field": "Item"}, {"aggregate": "sum", "field": "TotalNum", "title": "Revenue", "format": "$.2f"}]
               }
@@ -109,7 +123,14 @@
               "encoding": {
                 "x": {"field": "UnitCostNum", "type": "quantitative", "title": "Unit Cost ($)"},
                 "y": {"field": "TotalNum", "type": "quantitative", "title": "Total ($)"},
-                "color": {"field": "Item", "type": "nominal", "scale": {"scheme": "set2"}}, 
+                "color": {
+                  "field": "Item", 
+                  "type": "nominal", 
+                  "scale": {
+                    "domain": ["Binder", "Desk", "Pen", "Pen Set", "Pencil"],
+                    "range": ["#FF595E", "#FFCA3A", "#8AC926", "#1982C4", "#6A4C93"]
+                  }
+                }, 
                 "opacity": {
                   "condition": {"param": "brush", "empty": false, "value": 1},
                   "value": 0.15
