@@ -52,13 +52,13 @@
               "encoding": {
                 "x": {"timeUnit": "yearmonth", "field": "OrderDate", "axis": {"format": "%b %y", "grid": false}, "title": "Timeline"},
                 "y": {"aggregate": "sum", "field": "TotalNum", "stack": "center", "axis": null},
-                // CORRECTION: Applied "dark2" scheme to match Chart 5 for consistency
                 "color": {"field": "Item", "type": "nominal", "scale": {"scheme": "dark2"}}, 
                 "opacity": {"condition": {"param": "repSelect", "value": 0.9}, "value": 0.15},
                 "tooltip": [{"field": "Item"}, {"timeUnit": "yearmonth", "field": "OrderDate", "title": "Month"}, {"field": "TotalNum", "aggregate": "sum", "format": "$.2f"}]
               }
             }
-          ]
+          ],
+          "resolve": {"scale": {"color": "independent"}}
         },
         {
           "title": "3. Trellis Units Distribution with Mean Overlays",
@@ -95,8 +95,13 @@
               "encoding": {
                 "x": {"field": "Region", "type": "nominal", "axis": {"labelAngle": 0}},
                 "y": {"aggregate": "sum", "field": "TotalNum", "title": "Total Revenue"},
-                "color": {"condition": {"param": "regClick", "value": "#4a90e2"}, "value": "#cbd5e0"},
-                "opacity": {"condition": {"param": "repSelect", "value": 1}, "value": 0.3}
+                // UPDATED: Now colored by Item and using dark2 to match the dashboard
+                "color": {
+                  "condition": {"param": "regClick", "field": "Item", "type": "nominal", "scale": {"scheme": "dark2"}}, 
+                  "value": "#cbd5e0"
+                },
+                "opacity": {"condition": {"param": "repSelect", "value": 1}, "value": 0.3},
+                "tooltip": [{"field": "Region"}, {"field": "Item"}, {"field": "TotalNum", "aggregate": "sum", "title": "Revenue", "format": "$.2f"}]
               }
             },
             {
@@ -116,7 +121,9 @@
                 "tooltip": [{"field": "Rep"}, {"field": "Item"}, {"field": "UnitCostNum", "title": "Unit Cost"}, {"field": "TotalNum", "title": "Total", "format": "$.2f"}]
               }
             }
-          ]
+          ],
+          // Ensure Chart 4 and 5 share the same Item legend
+          "resolve": {"scale": {"color": "shared"}}
         }
       ],
       "resolve": {"scale": {"color": "independent"}}
