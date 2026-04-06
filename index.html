@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Vega-Lite Assignment 3 - A+ Interactive Dashboard</title>
+  <title>Vega-Lite Assignment 3 - Interactive Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
@@ -21,110 +21,84 @@
       "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
       "data": {
         "url": "HW_III.csv",
-        "format": {"type": "csv", "parse": {"OrderDate": "date:'%m/%d/%Y'"}}
+        "format": {"type": "csv"}
       },
       "transform": [
-        {"calculate": "toNumber(replace(datum.Total, ',', ''))", "as": "TotalNum"},
-        {"calculate": "toNumber(datum.Units)", "as": "UnitsNum"},
-        {"calculate": "toNumber(datum['Unit Cost'])", "as": "UnitCostNum"}
+        {"calculate": "toNumber(replace(datum['Unit Cost'], ',', ''))", "as": "UnitCostNum"},
+        {"calculate": "toNumber(replace(datum['Total'], ',', ''))", "as": "TotalNum"}
       ],
       "vconcat": [
         {
           "hconcat": [
             {
-              "title": "1. Rep Contribution (Click to Highlight)",
-              "width": 200, "height": 200,
-              "mark": {"type": "arc", "innerRadius": 60, "stroke": "#fff"},
-              "params": [{"name": "repSelect", "select": {"type": "point", "fields": ["Rep"]}}],
-              "transform": [{"filter": {"param": "brush"}}], 
+              "title": "Total Sales by Region",
+              "width": 300, "height": 200,
+              "mark": {"type": "arc", "innerRadius": 50, "tooltip": true},
               "encoding": {
                 "theta": {"field": "TotalNum", "type": "quantitative", "aggregate": "sum"},
-                "color": {"field": "Rep", "type": "nominal", "scale": {"scheme": "tableau10"}},
-                "opacity": {"condition": {"param": "repSelect", "value": 1}, "value": 0.2},
-                "tooltip": [{"field": "Rep"}, {"field": "TotalNum", "aggregate": "sum", "title": "Total ($)", "format": ",.2f"}]
+                "color": {
+                  "field": "Region", 
+                  "type": "nominal",
+                  "scale": {"scheme": "set1"} 
+                },
+                "tooltip": [
+                  {"field": "Region", "type": "nominal"},
+                  {"field": "TotalNum", "type": "quantitative", "aggregate": "sum", "title": "Total Sales", "format": "$,.2f"}
+                ]
               }
             },
             {
-              "title": "2. Sales Volume Trend (Streamgraph)",
-              "width": 450, "height": 200,
-              "mark": {"type": "area", "interpolate": "monotone", "line": false},
-              "transform": [{"filter": {"param": "brush"}}], 
+              "title": "Item Cost vs. Total Sales",
+              "width": 400, "height": 200,
+              "mark": {"type": "point", "filled": true, "size": 100, "tooltip": true},
               "encoding": {
-                "x": {"timeUnit": "yearmonth", "field": "OrderDate", "axis": {"format": "%b %y", "grid": false}, "title": "Timeline"},
-                "y": {"aggregate": "sum", "field": "TotalNum", "stack": "center", "axis": null},
-                "color": {"field": "Item", "type": "nominal", "scale": {"range": ["#F5F5DC", "#E8DAB2", "#C0D6DF", "#DBB4AD", "#AABCA0"]}}, 
-                "opacity": {"condition": {"param": "repSelect", "value": 0.9}, "value": 0.15},
-                "tooltip": [{"field": "Item"}, {"timeUnit": "yearmonth", "field": "OrderDate", "title": "Month"}, {"field": "TotalNum", "aggregate": "sum", "format": "$.2f"}]
+                "x": {"field": "UnitCostNum", "type": "quantitative", "title": "Unit Cost ($)"},
+                "y": {"field": "TotalNum", "type": "quantitative", "title": "Total ($)"},
+                "color": {
+                  "field": "Item", 
+                  "type": "nominal",
+                  "scale": {"scheme": "set2"} 
+                },
+                "tooltip": [
+                  {"field": "Item", "type": "nominal"},
+                  {"field": "UnitCostNum", "type": "quantitative", "title": "Unit Cost", "format": "$,.2f"},
+                  {"field": "TotalNum", "type": "quantitative", "title": "Total", "format": "$,.2f"}
+                ]
               }
             }
           ]
         },
         {
-          "title": "3. Trellis Units Distribution with Mean Overlays",
-          "facet": {"field": "Item", "type": "nominal", "columns": 5},
-          "spec": {
-            "width": 110, "height": 80,
-            "layer": [
-              {
-                "mark": {"type": "bar", "color": "#718096"},
-                "encoding": {
-                  "x": {"bin": {"maxbins": 10}, "field": "UnitsNum", "title": "Units"},
-                  "y": {"aggregate": "count", "title": "Freq"},
-                  "opacity": {"condition": {"param": "repSelect", "value": 1}, "value": 0.2}
-                }
-              },
-              {
-                // FIX 1: Increased size to 3 for easier hovering and added the tooltip encoding
-                "mark": {"type": "rule", "color": "#e53e3e", "size": 3},
-                "encoding": {
-                  "x": {"aggregate": "mean", "field": "UnitsNum"},
-                  "tooltip": [{"aggregate": "mean", "field": "UnitsNum", "title": "Average Units", "format": ".1f"}]
-                }
-              }
-            ]
-          }
-        },
-        {
           "hconcat": [
             {
-              "title": "4. Region Performance (Click to Highlight)",
-              "width": 300, "height": 200,
-              "mark": {"type": "bar", "cornerRadiusTop": 3},
-              "params": [{"name": "regClick", "select": {"type": "point", "fields": ["Region"]}}],
-              "transform": [{"filter": {"param": "brush"}}], 
+              "title": "Units Sold by Representative (Stacked by Item)",
+              "width": 350, "height": 250,
+              "mark": {"type": "bar", "tooltip": true},
               "encoding": {
-                "x": {"field": "Region", "type": "nominal", "axis": {"labelAngle": 0}},
-                "y": {"aggregate": "sum", "field": "TotalNum", "title": "Total Revenue"},
-                "color": {"condition": {"param": "regClick", "value": "#4a90e2"}, "value": "#cbd5e0"},
-                "opacity": {"condition": {"param": "repSelect", "value": 1}, "value": 0.3}
-              }
-            },
-            {
-              "title": "5. Item Cost vs. Total (Drag to Brush)",
-              "width": 350, "height": 200,
-              // FIX 2: Increased size to 100 and added a dark stroke outline
-              "mark": {"type": "point", "filled": true, "size": 100, "stroke": "#333", "strokeWidth": 0.5},
-              "params": [{"name": "brush", "select": "interval"}],
-              "transform": [{"filter": {"param": "regClick"}}], 
-              "encoding": {
-                "x": {"field": "UnitCostNum", "type": "quantitative", "title": "Unit Cost ($)"},
-                "y": {"field": "TotalNum", "type": "quantitative", "title": "Total ($)"},
-                // FIX 2: Changed to "dark2" scheme for bold, high-contrast colors
-                "color": {"field": "Item", "type": "nominal", "scale": {"scheme": "dark2"}}, 
-                "opacity": {
-                  "condition": {"param": "brush", "empty": false, "value": 1},
-                  "value": 0.15
+                "x": {"field": "Rep", "type": "nominal", "title": "Representative", "axis": {"labelAngle": -45}},
+                "y": {"field": "Units", "type": "quantitative", "aggregate": "sum", "title": "Total Units Sold"},
+                "color": {
+                  "field": "Item", 
+                  "type": "nominal",
+                  "scale": {"scheme": "set2"} 
                 },
-                "tooltip": [{"field": "Rep"}, {"field": "Item"}, {"field": "UnitCostNum", "title": "Unit Cost"}, {"field": "TotalNum", "title": "Total", "format": "$.2f"}]
+                "tooltip": [
+                  {"field": "Rep", "type": "nominal"},
+                  {"field": "Item", "type": "nominal"},
+                  {"field": "Units", "type": "quantitative", "aggregate": "sum", "title": "Units"}
+                ]
               }
             }
           ]
         }
       ],
-      "resolve": {"scale": {"color": "independent"}}
+      "config": {
+        "axis": {"labelFontSize": 12, "titleFontSize": 14},
+        "legend": {"labelFontSize": 12, "titleFontSize": 14}
+      }
     };
 
-    vegaEmbed('#vis', spec, {"actions": false}).catch(console.error);
+    vegaEmbed('#vis', spec).catch(console.error);
   </script>
 </body>
 </html>
