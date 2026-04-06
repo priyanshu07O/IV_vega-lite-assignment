@@ -52,9 +52,9 @@
               "encoding": {
                 "x": {"timeUnit": "yearmonth", "field": "OrderDate", "axis": {"format": "%b %y", "grid": false}, "title": "Timeline"},
                 "y": {"aggregate": "sum", "field": "TotalNum", "stack": "center", "axis": null},
-                "color": {"field": "Item", "type": "nominal", "scale": {"range": ["#F5F5DC", "#E8DAB2", "#C0D6DF", "#DBB4AD", "#AABCA0"]}}, 
+                "color": {"field": "Item", "type": "nominal", "scale": {"scheme": "set2"}}, 
                 "opacity": {"condition": {"param": "repSelect", "value": 0.9}, "value": 0.15},
-                "tooltip": [{"field": "Item"}, {"timeUnit": "yearmonth", "field": "OrderDate", "title": "Month"}, {"field": "TotalNum", "aggregate": "sum", "format": "$.2f"}]
+                "tooltip": [{"field": "Item"}, {"timeUnit": "yearmonth", "field": "OrderDate", "title": "Month"}, {"field": "TotalNum", "aggregate": "sum", "format": "$.2f", "title": "Volume ($)"}]
               }
             }
           ]
@@ -70,11 +70,11 @@
                 "encoding": {
                   "x": {"bin": {"maxbins": 10}, "field": "UnitsNum", "title": "Units"},
                   "y": {"aggregate": "count", "title": "Freq"},
-                  "opacity": {"condition": {"param": "repSelect", "value": 1}, "value": 0.2}
+                  "opacity": {"condition": {"param": "repSelect", "value": 1}, "value": 0.2},
+                  "tooltip": [{"field": "UnitsNum", "bin": {"maxbins": 10}, "title": "Units Range"}, {"aggregate": "count", "title": "Frequency"}]
                 }
               },
               {
-                // FIX 1: Increased size to 3 for easier hovering and added the tooltip encoding
                 "mark": {"type": "rule", "color": "#e53e3e", "size": 3},
                 "encoding": {
                   "x": {"aggregate": "mean", "field": "UnitsNum"},
@@ -87,7 +87,7 @@
         {
           "hconcat": [
             {
-              "title": "4. Region Performance (Click to Highlight)",
+              "title": "4. Region Performance (Stacked by Item)",
               "width": 300, "height": 200,
               "mark": {"type": "bar", "cornerRadiusTop": 3},
               "params": [{"name": "regClick", "select": {"type": "point", "fields": ["Region"]}}],
@@ -95,27 +95,26 @@
               "encoding": {
                 "x": {"field": "Region", "type": "nominal", "axis": {"labelAngle": 0}},
                 "y": {"aggregate": "sum", "field": "TotalNum", "title": "Total Revenue"},
-                "color": {"condition": {"param": "regClick", "value": "#4a90e2"}, "value": "#cbd5e0"},
-                "opacity": {"condition": {"param": "repSelect", "value": 1}, "value": 0.3}
+                "color": {"field": "Item", "type": "nominal", "scale": {"scheme": "set2"}},
+                "opacity": {"condition": {"param": "repSelect", "value": 1}, "value": 0.3},
+                "tooltip": [{"field": "Region"}, {"field": "Item"}, {"aggregate": "sum", "field": "TotalNum", "title": "Revenue", "format": "$.2f"}]
               }
             },
             {
               "title": "5. Item Cost vs. Total (Drag to Brush)",
               "width": 350, "height": 200,
-              // FIX 2: Increased size to 100 and added a dark stroke outline
               "mark": {"type": "point", "filled": true, "size": 100, "stroke": "#333", "strokeWidth": 0.5},
               "params": [{"name": "brush", "select": "interval"}],
               "transform": [{"filter": {"param": "regClick"}}], 
               "encoding": {
                 "x": {"field": "UnitCostNum", "type": "quantitative", "title": "Unit Cost ($)"},
                 "y": {"field": "TotalNum", "type": "quantitative", "title": "Total ($)"},
-                // FIX 2: Changed to "dark2" scheme for bold, high-contrast colors
-                "color": {"field": "Item", "type": "nominal", "scale": {"scheme": "dark2"}}, 
+                "color": {"field": "Item", "type": "nominal", "scale": {"scheme": "set2"}}, 
                 "opacity": {
                   "condition": {"param": "brush", "empty": false, "value": 1},
                   "value": 0.15
                 },
-                "tooltip": [{"field": "Rep"}, {"field": "Item"}, {"field": "UnitCostNum", "title": "Unit Cost"}, {"field": "TotalNum", "title": "Total", "format": "$.2f"}]
+                "tooltip": [{"field": "Rep"}, {"field": "Item"}, {"field": "UnitCostNum", "title": "Unit Cost", "format": "$.2f"}, {"field": "TotalNum", "title": "Total", "format": "$.2f"}]
               }
             }
           ]
