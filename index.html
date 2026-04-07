@@ -19,15 +19,18 @@
   <script>
     const spec = {
       "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      
       "data": {
         "url": "HW_III.csv",
         "format": {"type": "csv", "parse": {"OrderDate": "date:'%m/%d/%Y'"}}
       },
+      
       "transform": [
         {"calculate": "toNumber(replace(datum.Total, ',', ''))", "as": "TotalNum"},
         {"calculate": "toNumber(datum.Units)", "as": "UnitsNum"},
         {"calculate": "toNumber(datum['Unit Cost'])", "as": "UnitCostNum"}
       ],
+      
       "vconcat": [
         {
           "hconcat": [
@@ -60,6 +63,7 @@
           ],
           "resolve": {"scale": {"color": "independent"}}
         },
+        
         {
           "title": "3. Trellis Units Distribution with Mean Overlays",
           "facet": {"field": "Item", "type": "nominal", "columns": 5},
@@ -84,23 +88,26 @@
             ]
           }
         },
+        
         {
           "hconcat": [
             {
               "title": "4. Region Performance (Click to Highlight)",
               "width": 300, "height": 200,
               "mark": {"type": "bar", "cornerRadiusTop": 3},
+              // Interaction: Click region to filter scatter plot and highlight this chart
               "params": [{"name": "regClick", "select": {"type": "point", "fields": ["Region"]}}],
               "transform": [{"filter": {"param": "brush"}}], 
               "encoding": {
                 "x": {"field": "Region", "type": "nominal", "axis": {"labelAngle": 0}},
                 "y": {"aggregate": "sum", "field": "TotalNum", "title": "Total Revenue"},
-                // UPDATED: Now colored by Item and using dark2 to match the dashboard
-                "color": {
-                  "condition": {"param": "regClick", "field": "Item", "type": "nominal", "scale": {"scheme": "dark2"}}, 
-                  "value": "#cbd5e0"
+                // THE FIX: Color is permanently mapped to Item so the stack math never breaks
+                "color": {"field": "Item", "type": "nominal", "scale": {"scheme": "dark2"}},
+                // THE FIX: Opacity is now used to dim unselected regions when clicked
+                "opacity": {
+                  "condition": {"param": "regClick", "value": 1}, 
+                  "value": 0.2
                 },
-                "opacity": {"condition": {"param": "repSelect", "value": 1}, "value": 0.3},
                 "tooltip": [{"field": "Region"}, {"field": "Item"}, {"field": "TotalNum", "aggregate": "sum", "title": "Revenue", "format": "$.2f"}]
               }
             },
@@ -122,7 +129,6 @@
               }
             }
           ],
-          // Ensure Chart 4 and 5 share the same Item legend
           "resolve": {"scale": {"color": "shared"}}
         }
       ],
